@@ -7,7 +7,7 @@ function fetchQuery(operation, variables) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: "Bearer 7338b091e249bf6ca4f44120253d3378dde6c7df",
+      Authorization: `Bearer ${process.env.REACT_APP_GITH}`,
     },
     body: JSON.stringify({
       query: operation.text,
