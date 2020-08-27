@@ -11,12 +11,74 @@ import { AppContainer, AppLogo, AppHeader, AppLink } from "./style";
 const query = graphql`
   query AppQuery {
     repositoryOwner(login: "tjamesmac") {
-      repositories(last: 10) {
+      repositories(last: 5) {
         edges {
           node {
             name
             url
             createdAt
+            defaultBranchRef {
+              name
+              repository {
+                name
+              }
+              target {
+                abbreviatedOid
+                commitResourcePath
+                commitUrl
+                oid
+                ... on Commit {
+                  history(first: 10) {
+                    edges {
+                      node {
+                        author {
+                          name
+                          email
+                        }
+                        changedFiles
+                        message
+                        tree {
+                          entries {
+                            name
+                            object {
+                              ... on Tree {
+                                entries {
+                                  name
+                                  object {
+                                    ... on Tree {
+                                      entries {
+                                        name
+                                        object {
+                                          ... on Tree {
+                                            entries {
+                                              name
+                                              object {
+                                                ... on Blob {
+                                                  byteSize
+                                                  text
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                              ... on Blob {
+                                byteSize
+                                text
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
             languages(first: 5) {
               edges {
                 size
@@ -43,13 +105,12 @@ const query = graphql`
 function App() {
   return (
     <AppContainer>
-      <AppHeader className="App-header">
-        <AppLogo src={logo} className="App-logo" alt="logo" />
+      <AppHeader>
+        <AppLogo src={logo} alt="logo" />
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
         <AppLink
-          className="App-link"
           href="https://reactjs.org"
           target="_blank"
           rel="noopener noreferrer"
@@ -68,8 +129,10 @@ function App() {
           if (!props) {
             return <div>Loading...</div>;
           }
-          console.log(props);
-          return <div>User ID:</div>;
+          console.log(props.repositoryOwner.repositories);
+          return props.repositoryOwner.repositories.edges.map((item, index) => (
+            <p key={index}>{item.node.name}</p>
+          ));
         }}
       />
     </AppContainer>
