@@ -10,12 +10,22 @@
 import type { ConcreteRequest } from 'relay-runtime';
 export type AppQueryVariables = {||};
 export type AppQueryResponse = {|
-  +repository: ?{|
-    +issues: {|
+  +repositoryOwner: ?{|
+    +repositories: {|
       +edges: ?$ReadOnlyArray<?{|
         +node: ?{|
-          +title: string,
+          +name: string,
           +url: any,
+          +createdAt: any,
+          +languages: ?{|
+            +edges: ?$ReadOnlyArray<?{|
+              +size: number,
+              +node: {|
+                +color: ?string,
+                +name: string,
+              |},
+            |}>
+          |},
           +labels: ?{|
             +edges: ?$ReadOnlyArray<?{|
               +node: ?{|
@@ -37,12 +47,24 @@ export type AppQuery = {|
 
 /*
 query AppQuery {
-  repository(owner: "octocat", name: "Hello-World") {
-    issues(last: 20, states: CLOSED) {
+  repositoryOwner(login: "tjamesmac") {
+    __typename
+    repositories(last: 10) {
       edges {
         node {
-          title
+          name
           url
+          createdAt
+          languages(first: 5) {
+            edges {
+              size
+              node {
+                color
+                name
+                id
+              }
+            }
+          }
           labels(first: 5) {
             edges {
               node {
@@ -64,32 +86,22 @@ const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
     "kind": "Literal",
-    "name": "name",
-    "value": "Hello-World"
-  },
-  {
-    "kind": "Literal",
-    "name": "owner",
-    "value": "octocat"
+    "name": "login",
+    "value": "tjamesmac"
   }
 ],
 v1 = [
   {
     "kind": "Literal",
     "name": "last",
-    "value": 20
-  },
-  {
-    "kind": "Literal",
-    "name": "states",
-    "value": "CLOSED"
+    "value": 10
   }
 ],
 v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "title",
+  "name": "name",
   "storageKey": null
 },
 v3 = {
@@ -99,21 +111,35 @@ v3 = {
   "name": "url",
   "storageKey": null
 },
-v4 = [
+v4 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "createdAt",
+  "storageKey": null
+},
+v5 = [
   {
     "kind": "Literal",
     "name": "first",
     "value": 5
   }
 ],
-v5 = {
+v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "name",
+  "name": "size",
   "storageKey": null
 },
-v6 = {
+v7 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "color",
+  "storageKey": null
+},
+v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -130,23 +156,23 @@ return {
       {
         "alias": null,
         "args": (v0/*: any*/),
-        "concreteType": "Repository",
+        "concreteType": null,
         "kind": "LinkedField",
-        "name": "repository",
+        "name": "repositoryOwner",
         "plural": false,
         "selections": [
           {
             "alias": null,
             "args": (v1/*: any*/),
-            "concreteType": "IssueConnection",
+            "concreteType": "RepositoryConnection",
             "kind": "LinkedField",
-            "name": "issues",
+            "name": "repositories",
             "plural": false,
             "selections": [
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "IssueEdge",
+                "concreteType": "RepositoryEdge",
                 "kind": "LinkedField",
                 "name": "edges",
                 "plural": true,
@@ -154,16 +180,53 @@ return {
                   {
                     "alias": null,
                     "args": null,
-                    "concreteType": "Issue",
+                    "concreteType": "Repository",
                     "kind": "LinkedField",
                     "name": "node",
                     "plural": false,
                     "selections": [
                       (v2/*: any*/),
                       (v3/*: any*/),
+                      (v4/*: any*/),
                       {
                         "alias": null,
-                        "args": (v4/*: any*/),
+                        "args": (v5/*: any*/),
+                        "concreteType": "LanguageConnection",
+                        "kind": "LinkedField",
+                        "name": "languages",
+                        "plural": false,
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "LanguageEdge",
+                            "kind": "LinkedField",
+                            "name": "edges",
+                            "plural": true,
+                            "selections": [
+                              (v6/*: any*/),
+                              {
+                                "alias": null,
+                                "args": null,
+                                "concreteType": "Language",
+                                "kind": "LinkedField",
+                                "name": "node",
+                                "plural": false,
+                                "selections": [
+                                  (v7/*: any*/),
+                                  (v2/*: any*/)
+                                ],
+                                "storageKey": null
+                              }
+                            ],
+                            "storageKey": null
+                          }
+                        ],
+                        "storageKey": "languages(first:5)"
+                      },
+                      {
+                        "alias": null,
+                        "args": (v5/*: any*/),
                         "concreteType": "LabelConnection",
                         "kind": "LinkedField",
                         "name": "labels",
@@ -185,7 +248,7 @@ return {
                                 "name": "node",
                                 "plural": false,
                                 "selections": [
-                                  (v5/*: any*/)
+                                  (v2/*: any*/)
                                 ],
                                 "storageKey": null
                               }
@@ -202,10 +265,10 @@ return {
                 "storageKey": null
               }
             ],
-            "storageKey": "issues(last:20,states:\"CLOSED\")"
+            "storageKey": "repositories(last:10)"
           }
         ],
-        "storageKey": "repository(name:\"Hello-World\",owner:\"octocat\")"
+        "storageKey": "repositoryOwner(login:\"tjamesmac\")"
       }
     ],
     "type": "Query",
@@ -220,23 +283,30 @@ return {
       {
         "alias": null,
         "args": (v0/*: any*/),
-        "concreteType": "Repository",
+        "concreteType": null,
         "kind": "LinkedField",
-        "name": "repository",
+        "name": "repositoryOwner",
         "plural": false,
         "selections": [
           {
             "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "__typename",
+            "storageKey": null
+          },
+          {
+            "alias": null,
             "args": (v1/*: any*/),
-            "concreteType": "IssueConnection",
+            "concreteType": "RepositoryConnection",
             "kind": "LinkedField",
-            "name": "issues",
+            "name": "repositories",
             "plural": false,
             "selections": [
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "IssueEdge",
+                "concreteType": "RepositoryEdge",
                 "kind": "LinkedField",
                 "name": "edges",
                 "plural": true,
@@ -244,16 +314,54 @@ return {
                   {
                     "alias": null,
                     "args": null,
-                    "concreteType": "Issue",
+                    "concreteType": "Repository",
                     "kind": "LinkedField",
                     "name": "node",
                     "plural": false,
                     "selections": [
                       (v2/*: any*/),
                       (v3/*: any*/),
+                      (v4/*: any*/),
                       {
                         "alias": null,
-                        "args": (v4/*: any*/),
+                        "args": (v5/*: any*/),
+                        "concreteType": "LanguageConnection",
+                        "kind": "LinkedField",
+                        "name": "languages",
+                        "plural": false,
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "LanguageEdge",
+                            "kind": "LinkedField",
+                            "name": "edges",
+                            "plural": true,
+                            "selections": [
+                              (v6/*: any*/),
+                              {
+                                "alias": null,
+                                "args": null,
+                                "concreteType": "Language",
+                                "kind": "LinkedField",
+                                "name": "node",
+                                "plural": false,
+                                "selections": [
+                                  (v7/*: any*/),
+                                  (v2/*: any*/),
+                                  (v8/*: any*/)
+                                ],
+                                "storageKey": null
+                              }
+                            ],
+                            "storageKey": null
+                          }
+                        ],
+                        "storageKey": "languages(first:5)"
+                      },
+                      {
+                        "alias": null,
+                        "args": (v5/*: any*/),
                         "concreteType": "LabelConnection",
                         "kind": "LinkedField",
                         "name": "labels",
@@ -275,8 +383,8 @@ return {
                                 "name": "node",
                                 "plural": false,
                                 "selections": [
-                                  (v5/*: any*/),
-                                  (v6/*: any*/)
+                                  (v2/*: any*/),
+                                  (v8/*: any*/)
                                 ],
                                 "storageKey": null
                               }
@@ -286,7 +394,7 @@ return {
                         ],
                         "storageKey": "labels(first:5)"
                       },
-                      (v6/*: any*/)
+                      (v8/*: any*/)
                     ],
                     "storageKey": null
                   }
@@ -294,25 +402,25 @@ return {
                 "storageKey": null
               }
             ],
-            "storageKey": "issues(last:20,states:\"CLOSED\")"
+            "storageKey": "repositories(last:10)"
           },
-          (v6/*: any*/)
+          (v8/*: any*/)
         ],
-        "storageKey": "repository(name:\"Hello-World\",owner:\"octocat\")"
+        "storageKey": "repositoryOwner(login:\"tjamesmac\")"
       }
     ]
   },
   "params": {
-    "cacheID": "6260454b60cc1858f95a98e38d4d35ca",
+    "cacheID": "9404350bc5f04681bae009fa7b75c0d6",
     "id": null,
     "metadata": {},
     "name": "AppQuery",
     "operationKind": "query",
-    "text": "query AppQuery {\n  repository(owner: \"octocat\", name: \"Hello-World\") {\n    issues(last: 20, states: CLOSED) {\n      edges {\n        node {\n          title\n          url\n          labels(first: 5) {\n            edges {\n              node {\n                name\n                id\n              }\n            }\n          }\n          id\n        }\n      }\n    }\n    id\n  }\n}\n"
+    "text": "query AppQuery {\n  repositoryOwner(login: \"tjamesmac\") {\n    __typename\n    repositories(last: 10) {\n      edges {\n        node {\n          name\n          url\n          createdAt\n          languages(first: 5) {\n            edges {\n              size\n              node {\n                color\n                name\n                id\n              }\n            }\n          }\n          labels(first: 5) {\n            edges {\n              node {\n                name\n                id\n              }\n            }\n          }\n          id\n        }\n      }\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'a7f48107df7461cecfe177928ee016c6';
+(node/*: any*/).hash = '1aa4ef648141a988aef7d8f21f300e13';
 
 module.exports = node;

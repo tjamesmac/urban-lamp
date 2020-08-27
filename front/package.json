@@ -19,7 +19,7 @@
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook -s public",
-    "relay": "relay-compiler --src ./src --schema ./src/data/schema.docs.graphql --extensions js jsx"
+    "relay": "relay-compiler --src ./src --schema ./src/data/schema.docs.graphql --extensions js jsx --watchman false"
   },
   "eslintConfig": {
     "extends": "react-app"

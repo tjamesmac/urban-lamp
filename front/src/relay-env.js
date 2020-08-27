@@ -14,7 +14,6 @@ function fetchQuery(operation, variables) {
       variables,
     }),
   }).then((response) => {
-    console.log(response.json());
     return response.json();
   });
 }

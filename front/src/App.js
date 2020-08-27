@@ -9,12 +9,22 @@ import environment from "./relay-env";
 
 const query = graphql`
   query AppQuery {
-    repository(owner: "octocat", name: "Hello-World") {
-      issues(last: 20, states: CLOSED) {
+    repositoryOwner(login: "tjamesmac") {
+      repositories(last: 10) {
         edges {
           node {
-            title
+            name
             url
+            createdAt
+            languages(first: 5) {
+              edges {
+                size
+                node {
+                  color
+                  name
+                }
+              }
+            }
             labels(first: 5) {
               edges {
                 node {
@@ -57,6 +67,7 @@ function App() {
           if (!props) {
             return <div>Loading...</div>;
           }
+          console.log(props);
           return <div>User ID:</div>;
         }}
       />
