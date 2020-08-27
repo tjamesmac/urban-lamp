@@ -1,11 +1,12 @@
 import React from "react";
 import logo from "./logo.svg";
-import "./App.css";
 
 import { QueryRenderer } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 
-import environment from "./relay-env";
+import environment from "../relay-env";
+
+import { AppContainer, AppLogo, AppHeader, AppLink } from "./style";
 
 const query = graphql`
   query AppQuery {
@@ -41,21 +42,21 @@ const query = graphql`
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+    <AppContainer>
+      <AppHeader className="App-header">
+        <AppLogo src={logo} className="App-logo" alt="logo" />
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
-        <a
+        <AppLink
           className="App-link"
           href="https://reactjs.org"
           target="_blank"
           rel="noopener noreferrer"
         >
           Learn React
-        </a>
-      </header>
+        </AppLink>
+      </AppHeader>
       <QueryRenderer
         environment={environment}
         query={query}
@@ -71,7 +72,7 @@ function App() {
           return <div>User ID:</div>;
         }}
       />
-    </div>
+    </AppContainer>
   );
 }
 
